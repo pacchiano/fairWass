@@ -1,6 +1,6 @@
 
 import matplotlib
-matplotlib.use("Agg")
+#matplotlib.use("Agg")
 import numpy as np
 import pickle
 import random
@@ -21,14 +21,18 @@ def dummy_big_cost(embedding1, embedding2):
 
 
 def dummy_test_function(embedding):
-	return -1
+	return 0
 
 ### Utilities for continuous embeddings
-def gaussian_kernel(x,y, sigma = 1):
-	return np.exp(-np.dot(x-y, x-y)/(sigma**2))
+def gaussian_kernel(x,y, sigma = .01):
+	#print(np.exp(-np.dot(x-y, x-y)/(sigma**2)))
+	return np.exp(-1.0*(np.linalg.norm(x-y)**2)/(sigma**2))
 
 def lp_cost(x, y, p=2):
-	return np.linalg.norm(x-y)
+	if np.linalg.norm(x-y) < .1:
+		return np.linalg.norm(x-y)**2 
+	else:
+		return 10
 
 def produce_test_function(datapoints, alphas, kernel, random_features = False):
 	if random_features:
@@ -47,11 +51,10 @@ def produce_test_function(datapoints, alphas, kernel, random_features = False):
 def get_new_test_functions_coefficient(x_t, y_t, lambda_x, lambda_y, kernel_1, kernel_2, step_size, 
 	smoothing, round_index, cost_function):
 	
-	coefficient = step_size*(1.0/np.sqrt(round_index))
+	coefficient = step_size*(1.0/np.sqrt(round_index))*(1-np.exp( (lambda_x(x_t) + lambda_y(y_t) - cost_function(x_t, y_t))/smoothing ))
 	print(lambda_x(x_t), " lambda x_t" )
 	print(lambda_y(y_t), " lambda y_t")
 	print(cost_function(x_t, y_t), " cost function ")
-	coefficient *= (1-np.exp( (lambda_x(x_t) + lambda_y(y_t) - cost_function(x_t, y_t))/smoothing ))
 	#IPython.embed()
 	return coefficient
 
@@ -113,5 +116,5 @@ def penalized_linear_regression( dataset_1, responses_1, dataset_2, responses_2,
 	## initialize theta at some random point
 	theta = np.random.normal(0, 1, dimension)
 
-	
-	
+
+

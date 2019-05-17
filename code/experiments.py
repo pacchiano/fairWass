@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 
 dim = 1
 mu_1 = np.ones(dim)
-mu_2 = -1*np.ones(dim)
+mu_2 = np.ones(dim)
 
 dataset_size = 1000
 kernel_1 = gaussian_kernel
 kernel_2 = gaussian_kernel
 step_size = .01 #good setting .01
-smoothing = .01 #good setting .001
+smoothing = .1 #good setting .01
 rounds = 5000
 cost_function = lp_cost
 
